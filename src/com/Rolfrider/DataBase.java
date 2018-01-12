@@ -5,11 +5,10 @@ import java.util.ArrayList;
 
 public class DataBase {
     final String PATH = "jdbc:sqlite:sql_liteDB/";
-    String DBname = "PlayersData.db";
+    final String  DBname = "PlayersData.db";
 
 
     DataBase(){
-
 
     }
 
@@ -53,18 +52,75 @@ public class DataBase {
         }
     }
 
-    public void selectAllData(){
+    public ArrayList<Player> selectData(){// Returns all players
+        ArrayList<Player> players = new ArrayList<>();
+        Player player = new Player();
+        ArrayList<String> intNames = player.getIntFieldsNames(),
+                stringNames = player.getStringFieldsNames();
         try (Connection con = this.connectToDatabase();
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(sqlSelect)){
-            while (rs.next()){
-                System.out.println(rs.getInt("id"));
-            }
+            parseToplayer(players, player, intNames, stringNames, rs);
 
         }catch (SQLException e){
             System.out.println(e.getMessage());
+            System.out.println("Returned null value");
+        }
+        return players;
+    }
+
+    public ArrayList<Player> selectData(int value, String operator, String field){
+
+        String sqlSelect = "SELECT * FROM " + DBname.substring(0, DBname.length()-3) +
+                " WHERE " + field + " " + operator + " ?";
+        ArrayList<Player> players = new ArrayList<>();
+        Player player = new Player();
+        ArrayList<String> intNames = player.getIntFieldsNames(),
+                stringNames = player.getStringFieldsNames();
+
+        try (Connection con = this.connectToDatabase();
+             PreparedStatement pstmt  = con.prepareStatement(sqlSelect)){
+            pstmt.setInt(1,value);
+            ResultSet rs = pstmt.executeQuery();
+            parseToplayer(players, player, intNames, stringNames, rs);
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+            System.out.println("Returned null value");
+        }
+        return players;
+    }
+
+    public ArrayList<Player> selectData(String value, String operator, String field){
+        String sqlSelect = "SELECT * FROM " + DBname.substring(0, DBname.length()-3) +
+                " WHERE " + field + " " + operator + " ?";
+        ArrayList<Player> players = new ArrayList<>();
+        Player player = new Player();
+        ArrayList<String> intNames = player.getIntFieldsNames(),
+                stringNames = player.getStringFieldsNames();
+
+        try (Connection con = this.connectToDatabase();
+             PreparedStatement pstmt  = con.prepareStatement(sqlSelect)){
+            pstmt.setString(1,value);
+            ResultSet rs = pstmt.executeQuery();
+            parseToplayer(players, player, intNames, stringNames, rs);
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+            System.out.println("Returned null value");
+        }
+        return players;
+    }
+
+    private void parseToplayer(ArrayList<Player> players, Player player, ArrayList<String> intNames, ArrayList<String> stringNames, ResultSet rs) throws SQLException {
+        while (rs.next()){
+            for(String i : intNames)
+                player.setField(i,rs.getInt(i));
+            for(String s : stringNames)
+                player.setField(s, rs.getString(s));
+            players.add(player);
+            player = new Player();
         }
     }
+
 
     public void createTable(){
         String url = PATH + DBname;
@@ -79,18 +135,7 @@ public class DataBase {
 
     }
 
-    private String sqlSelect = "SELECT web_name,status,first_name,second_name,news," +
-            "news_added,value_form,value_seson,selected_by_percent," +
-            "form,points_per_game,ep_this,ep_next,influence,creativity," +
-            "threat,ict_index," +
-            "id,team_code,code,squad_number,now_cost,chance_of_playing_this_round," +
-            "chance_of_playing_next_round,cost_change_start,cost_change_event," +
-            "cost_change_start_fall,cost_change_event_fall,dreamteam_count," +
-            "transfers_out,transfers_in,transfers_out_event,transfers_in_event," +
-            "loans_in,loans_out,loaned_in,loaned_out,total_points,event_points,minutes," +
-            "goals_scored,assists,clean_sheets,goals_conceded,own_goals,penalties_saved," +
-            "penalties_missed,yellow_cards,red_cards,saves,bonus,bps,ea_index,element_type," +
-            "team " +
+    private String sqlSelect = "SELECT * " +
             "FROM " + DBname.substring(0, DBname.length()-3) ;
 
     private String sqlInsert = "INSERT OR REPLACE INTO " + DBname.substring(0, DBname.length()-3) +

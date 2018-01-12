@@ -72,6 +72,19 @@ public class Player {
     public String getWeb_name(){return web_name;}
     public int getId(){return id;}
 
+    public void setField(String name, Object value){
+        try {
+            Field field = this.getClass().getDeclaredField(name);
+            field.set(this, value);
+        }catch (NoSuchFieldException e) {
+            System.out.println(e.getMessage());
+        } catch (IllegalAccessException e){
+        System.out.println(e.getMessage());
+        }
+    }
+
+
+
     @Override
     public String toString() {
         return "Name: " + this.web_name + "\t Cost: " +
@@ -83,6 +96,27 @@ public class Player {
 //                "\t Cost change eve fall: " + (float)this.cost_change_event_fall/10+
 //                "\t Cost change start fall: " + (float)this.cost_change_start_fall/10
                 "\t Status: " + this.status;
+    }
+
+    public ArrayList<String> getIntFieldsNames(){
+        ArrayList<String> fieldsNames = new ArrayList<>();
+        Field[] fields = this.getClass().getDeclaredFields();
+        for(Field f : fields){
+            if(f.getType() == int.class){
+                fieldsNames.add(f.getName());
+            }
+        }
+        return fieldsNames;
+    }
+    public ArrayList<String> getStringFieldsNames(){
+        ArrayList<String> fieldsNames = new ArrayList<>();
+        Field[] fields = this.getClass().getDeclaredFields();
+        for(Field f : fields){
+            if(f.getType() == String.class && !f.getName().equals("photo")){
+                fieldsNames.add(f.getName());
+            }
+        }
+        return fieldsNames;
     }
 
     public ArrayList<Integer> getIntData(){
