@@ -6,9 +6,7 @@ public class App {
     public static void main(String[] args) {
         ArrayList<Player> players = DataReader.Read();
         DataBase db = new DataBase();
-        db.createTable();
-        for (Player player:players)
-            db.insertData(player);
+        db.selectAllData();
 
         //System.out.println(players.get(15).toString());
 

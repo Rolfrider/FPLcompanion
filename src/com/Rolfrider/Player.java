@@ -89,7 +89,7 @@ public class Player {
         ArrayList<Integer> intData = new ArrayList<>();
         Field[] fields = this.getClass().getDeclaredFields();
         for(Field f : fields){
-            if(f.getType()==int.class && !f.getName().equals("id"))
+            if(f.getType()==int.class)
                 try {
                     intData.add((Integer) f.get(this));
                 }catch (IllegalAccessException e){

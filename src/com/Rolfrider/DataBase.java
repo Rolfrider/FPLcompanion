@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class DataBase {
-    final String PATH = "jdbc:sqlite:D:/stud/Java/Project/sql_liteDB/";
+    final String PATH = "jdbc:sqlite:sql_liteDB/";
     String DBname = "PlayersData.db";
 
 
@@ -53,6 +53,19 @@ public class DataBase {
         }
     }
 
+    public void selectAllData(){
+        try (Connection con = this.connectToDatabase();
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sqlSelect)){
+            while (rs.next()){
+                System.out.println(rs.getInt("id"));
+            }
+
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
     public void createTable(){
         String url = PATH + DBname;
         try (Connection conn = DriverManager.getConnection(url);
@@ -66,12 +79,26 @@ public class DataBase {
 
     }
 
-    String sqlInsert = "INSERT INTO " + DBname.substring(0, DBname.length()-3) +
+    private String sqlSelect = "SELECT web_name,status,first_name,second_name,news," +
+            "news_added,value_form,value_seson,selected_by_percent," +
+            "form,points_per_game,ep_this,ep_next,influence,creativity," +
+            "threat,ict_index," +
+            "id,team_code,code,squad_number,now_cost,chance_of_playing_this_round," +
+            "chance_of_playing_next_round,cost_change_start,cost_change_event," +
+            "cost_change_start_fall,cost_change_event_fall,dreamteam_count," +
+            "transfers_out,transfers_in,transfers_out_event,transfers_in_event," +
+            "loans_in,loans_out,loaned_in,loaned_out,total_points,event_points,minutes," +
+            "goals_scored,assists,clean_sheets,goals_conceded,own_goals,penalties_saved," +
+            "penalties_missed,yellow_cards,red_cards,saves,bonus,bps,ea_index,element_type," +
+            "team " +
+            "FROM " + DBname.substring(0, DBname.length()-3) ;
+
+    private String sqlInsert = "INSERT OR REPLACE INTO " + DBname.substring(0, DBname.length()-3) +
             "(web_name,status,first_name,second_name,news," +
             "news_added,value_form,value_seson,selected_by_percent," +
             "form,points_per_game,ep_this,ep_next,influence,creativity," +
             "threat,ict_index," +
-            "team_code,code,squad_number,now_cost,chance_of_playing_this_round," +
+            "id,team_code,code,squad_number,now_cost,chance_of_playing_this_round," +
             "chance_of_playing_next_round,cost_change_start,cost_change_event," +
             "cost_change_start_fall,cost_change_event_fall,dreamteam_count," +
             "transfers_out,transfers_in,transfers_out_event,transfers_in_event," +
@@ -79,11 +106,11 @@ public class DataBase {
             "goals_scored,assists,clean_sheets,goals_conceded,own_goals,penalties_saved," +
             "penalties_missed,yellow_cards,red_cards,saves,bonus,bps,ea_index,element_type," +
             "team)" +
-            " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?" +
+            " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?" +
             ",?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?" +
             ",?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
-    String sqlTable = "CREATE TABLE IF NOT EXISTS " + DBname.substring(0, DBname.length()-3) + "(\n"
+    private String sqlTable = "CREATE TABLE IF NOT EXISTS " + DBname.substring(0, DBname.length()-3) + "(\n"
             + "	id integer PRIMARY KEY AUTOINCREMENT,\n"
 
             + " web_name text NOT NULL, \n "
