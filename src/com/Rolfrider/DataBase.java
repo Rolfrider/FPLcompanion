@@ -2,6 +2,7 @@ package com.Rolfrider;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class DataBase {
     final String PATH = "jdbc:sqlite:sql_liteDB/";
@@ -9,6 +10,12 @@ public class DataBase {
 
 
     DataBase(){
+        createTable();
+        createTimeTable();
+        if(needUpdate()){
+            for(Player p : DataReader.Read())
+                insertData(p);
+        }
 
     }
 
@@ -50,6 +57,7 @@ public class DataBase {
         }catch (SQLException e){
             System.out.println(e.getMessage());
         }
+        insertOrUpdate();
     }
 
     public ArrayList<Player> selectData(){// Returns all players
@@ -110,7 +118,8 @@ public class DataBase {
         return players;
     }
 
-    private void parseToplayer(ArrayList<Player> players, Player player, ArrayList<String> intNames, ArrayList<String> stringNames, ResultSet rs) throws SQLException {
+    private void parseToplayer(ArrayList<Player> players, Player player, ArrayList<String> intNames,
+                               ArrayList<String> stringNames, ResultSet rs) throws SQLException {
         while (rs.next()){
             for(String i : intNames)
                 player.setField(i,rs.getInt(i));
@@ -120,6 +129,72 @@ public class DataBase {
             player = new Player();
         }
     }
+
+    private void createTimeTable(){
+        String sql = "CREATE TABLE " +
+                "  IF NOT EXISTS dateTime (d int)";
+        try(Connection con = this.connectToDatabase();
+            Statement stmt = con.createStatement()){
+                stmt.execute(sql);
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private int selectTime(){
+        String sql = "SELECT d " +
+                "FROM dateTime";
+        int time = 0;
+        try (Connection con = this.connectToDatabase();
+             PreparedStatement pstmt  = con.prepareStatement(sql)){
+            ResultSet rs = pstmt.executeQuery();
+            if(rs.next()){
+                time = rs.getInt("d");
+            }
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+            System.out.println("Returned null value");
+        }
+        return time;
+    }
+
+    private void insertOrUpdate(){
+        int time = selectTime();
+        if(time == 0){
+            insertTime();
+        }else
+            updateTime();
+    }
+
+    private boolean needUpdate(){
+        final int oneDay = 86400;
+        return selectTime() + oneDay < TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
+    }
+
+
+    private void insertTime(){
+        String sql = "INSERT INTO dateTime (d)" +
+                "VALUES (strftime('%s', 'now'))";
+        try (Connection conn = this.connectToDatabase();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void updateTime(){
+        String sql = "UPDATE dateTime " +
+                "SET d = strftime('%s', 'now')";
+        try (Connection conn = this.connectToDatabase();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
+
 
 
     public void createTable(){
