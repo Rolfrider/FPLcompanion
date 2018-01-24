@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.GridPane?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="527.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.Rolfrider.WindowController">
+   <center>
+      <TableView fx:id="playerTable" BorderPane.alignment="CENTER">
+        <columns>
+          <TableColumn fx:id="nameColumn" prefWidth="75.0" text="Name" />
+          <TableColumn fx:id="clubColumn" minWidth="20.0" prefWidth="75.0" text="Club" />
+            <TableColumn fx:id="formColumn" prefWidth="75.0" text="Form" />
+            <TableColumn fx:id="costColumn" prefWidth="75.0" text="Cost" />
+            <TableColumn fx:id="totalPointsColumn" prefWidth="75.0" text="Total points" />
+            <TableColumn fx:id="ictIndexColumn" prefWidth="75.0" text="ICT index" />
+            <TableColumn fx:id="selectedByColumn" prefWidth="75.0" text="Selected by" />
+        </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+         <BorderPane.margin>
+            <Insets left="2.0" right="2.0" />
+         </BorderPane.margin>
+      </TableView>
+   </center>
+   <bottom>
+      <HBox BorderPane.alignment="CENTER">
+         <children>
+            <Region prefHeight="29.0" prefWidth="300.0" HBox.hgrow="ALWAYS" />
+            <Button fx:id="updateB" mnemonicParsing="false" onAction="#updateData" text="Update">
+               <padding>
+                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+               </padding>
+               <HBox.margin>
+                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+               </HBox.margin>
+            </Button>
+            <Label fx:id="updateLabel" text="Last update :">
+               <padding>
+                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+               </padding>
+               <HBox.margin>
+                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+               </HBox.margin>
+            </Label>
+         </children>
+      </HBox>
+   </bottom>
+   <right>
+      <VBox BorderPane.alignment="CENTER" />
+   </right>
+   <top>
+      <HBox BorderPane.alignment="CENTER">
+         <children>
+            <TextField fx:id="nameText" promptText="Name">
+               <HBox.margin>
+                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+               </HBox.margin>
+            </TextField>
+            <TextField fx:id="clubText" layoutX="14.0" layoutY="14.0" promptText="Club">
+               <HBox.margin>
+                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+               </HBox.margin>
+            </TextField>
+         </children>
+      </HBox>
+   </top>
+</BorderPane>

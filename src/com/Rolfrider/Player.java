@@ -69,7 +69,7 @@ public class Player {
             ict_index;
 
 
-    public String getWeb_name(){return web_name;}
+
     public int getId(){return id;}
 
     public void setField(String name, Object value){
@@ -108,6 +108,63 @@ public class Player {
         }
         return fieldsNames;
     }
+
+    public float getNow_cost() {
+        return (float)now_cost/10;
+    }
+
+    public void setNow_cost(int now_cost) {
+        this.now_cost = now_cost;
+    }
+
+    public int getTotal_points() {
+        return total_points;
+    }
+
+    public void setTotal_points(int total_points) {
+        this.total_points = total_points;
+    }
+
+    public String getTeam() {
+        return teamMap(team);
+    }
+
+    public void setTeam(int team) {
+        this.team = team;
+    }
+
+    public String getWeb_name(){
+        return web_name;
+    }
+
+    public void setWeb_name(String web_name) {
+        this.web_name = web_name;
+    }
+
+    public String getSelected_by_percent() {
+        return selected_by_percent;
+    }
+
+    public void setSelected_by_percent(String selected_by_percent) {
+        this.selected_by_percent = selected_by_percent;
+    }
+
+    public String getForm() {
+        return form;
+    }
+
+    public void setForm(String form) {
+        this.form = form;
+    }
+
+    public String getIct_index() {
+        return ict_index;
+    }
+
+    public void setIct_index(String ict_index) {
+        this.ict_index = ict_index;
+    }
+
     public ArrayList<String> getStringFieldsNames(){
         ArrayList<String> fieldsNames = new ArrayList<>();
         Field[] fields = this.getClass().getDeclaredFields();
@@ -116,6 +173,7 @@ public class Player {
                 fieldsNames.add(f.getName());
             }
         }
+
         return fieldsNames;
     }
 
@@ -147,5 +205,72 @@ public class Player {
 
         }
         return sData;
+    }
+
+    private String teamMap(int team){
+        String teamName = "";
+        switch (team){
+            case 1:
+                teamName = "ARS";
+                break;
+            case 2:
+                teamName = "BOU";
+                break;
+            case 3:
+                teamName = "BHA";
+                break;
+            case 4:
+                teamName = "BUR";
+                break;
+            case 5:
+                teamName = "CHE";
+                break;
+            case 6:
+                teamName = "CRY";
+                break;
+            case 7:
+                teamName = "EVE";
+                break;
+            case 8:
+                teamName = "HUD";
+                break;
+            case 9:
+                teamName = "LEI";
+                break;
+            case 10:
+                teamName = "LIV";
+                break;
+            case 11:
+                teamName = "MCI";
+                break;
+            case 12:
+                teamName = "MUN";
+                break;
+            case 13:
+                teamName = "NEW";
+                break;
+            case 14:
+                teamName = "SOU";
+                break;
+            case 15:
+                teamName = "STK";
+                break;
+            case 16:
+                teamName = "SWA";
+                break;
+            case 17:
+                teamName = "TOT";
+                break;
+            case 18:
+                teamName = "WAT";
+                break;
+            case 19:
+                teamName = "WBA";
+                break;
+            case 20:
+                teamName = "WHU";
+                break;
+        }
+        return teamName;
     }
 }

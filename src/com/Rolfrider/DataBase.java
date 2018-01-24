@@ -141,7 +141,7 @@ public class DataBase {
         }
     }
 
-    private int selectTime(){
+    public int selectTime(){
         String sql = "SELECT d " +
                 "FROM dateTime";
         int time = 0;
