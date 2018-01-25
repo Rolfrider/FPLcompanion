@@ -5,6 +5,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class Player {
     private int     id,
@@ -141,24 +142,24 @@ public class Player {
         this.web_name = web_name;
     }
 
-    public String getSelected_by_percent() {
-        return selected_by_percent;
+    public Float getSelected_by_percent() {
+        return Float.parseFloat(selected_by_percent);
     }
 
     public void setSelected_by_percent(String selected_by_percent) {
         this.selected_by_percent = selected_by_percent;
     }
 
-    public String getForm() {
-        return form;
+    public Float getForm() {
+        return Float.parseFloat(form);
     }
 
     public void setForm(String form) {
         this.form = form;
     }
 
-    public String getIct_index() {
-        return ict_index;
+    public Float getIct_index() {
+        return Float.parseFloat(ict_index);
     }
 
     public void setIct_index(String ict_index) {
@@ -273,4 +274,6 @@ public class Player {
         }
         return teamName;
     }
+
+
 }

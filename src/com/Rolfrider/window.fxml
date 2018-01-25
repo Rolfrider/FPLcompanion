@@ -57,16 +57,31 @@
    <top>
       <HBox BorderPane.alignment="CENTER">
          <children>
-            <TextField fx:id="nameText" promptText="Name">
+            <TextField fx:id="nameText" onAction="#nameTyping" onKeyTyped="#nameTyping" prefHeight="25.0" prefWidth="122.0" promptText="Name">
                <HBox.margin>
                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                </HBox.margin>
             </TextField>
-            <TextField fx:id="clubText" layoutX="14.0" layoutY="14.0" promptText="Club">
+            <Label layoutX="227.0" layoutY="18.0" text="Club : ">
+               <HBox.margin>
+                  <Insets bottom="4.0" left="4.0" right="4.0" top="8.0" />
+               </HBox.margin>
+            </Label>
+            <ChoiceBox fx:id="dropDownClub" layoutX="219.0" layoutY="14.0" prefHeight="25.0" prefWidth="75.0">
                <HBox.margin>
                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                </HBox.margin>
-            </TextField>
+            </ChoiceBox>
+            <Label text="Price up to : ">
+               <HBox.margin>
+                  <Insets bottom="4.0" left="4.0" right="4.0" top="8.0" />
+               </HBox.margin>
+            </Label>
+            <ChoiceBox fx:id="dropDownPrice" prefHeight="25.0" prefWidth="89.0">
+               <HBox.margin>
+                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+               </HBox.margin>
+            </ChoiceBox>
          </children>
       </HBox>
    </top>
