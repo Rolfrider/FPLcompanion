@@ -160,13 +160,19 @@ public class WindowController implements Initializable {
         updateTable(createSubList(priceVal, value, dropDownPosition.getValue() ));
     }
 
+    private void setDropDowns(){
+        dropDownPrice.setValue("Unlimited");
+        dropDownPosition.setValue("ALL");
+        dropDownClub.setValue("ALL");
+    }
 
-    private ArrayList<Player> createSubList(float priceVal, String clubVal, String positionVal){// Problems with this
+
+    private ArrayList<Player> createSubList(float priceVal, String clubVal, String positionVal){
         ArrayList<Player> players = new ArrayList<>();
         for(Player p : this.players){
             if(p.getNow_cost() <= priceVal &&
-                    (p.getTeam().equals(clubVal) || p.getTeam().equals("ALL")) &&
-                    (p.getElement_type().equals(positionVal)|| p.getElement_type().equals("ALL"))
+                    ( p.getTeam().equals(clubVal) || clubVal.equals("ALL") ) &&
+                    ( p.getElement_type().equals(positionVal) || positionVal.equals("ALL") )
                     ) {
                 players.add(p);
             }
@@ -177,6 +183,7 @@ public class WindowController implements Initializable {
     public void nameTyping(){
         String text = nameText.getText();
         updateTable(dataBase.selectData(text + "%", "like", "web_name"));
+        setDropDowns();
     }
 
 }
