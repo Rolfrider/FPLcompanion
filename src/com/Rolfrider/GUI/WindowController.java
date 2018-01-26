@@ -1,5 +1,8 @@
-package com.Rolfrider;
+package com.Rolfrider.GUI;
 
+import com.Rolfrider.Data.DataBase;
+import com.Rolfrider.Data.Player;
+import com.Rolfrider.Data.UpdateTask;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -7,17 +10,18 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class WindowController implements Initializable {
 
     private DataBase dataBase = new DataBase();
-    private ArrayList<Player> players = new ArrayList<>(dataBase.selectData());
+    private ArrayList<Player> players ;
+    @FXML
+    private ProgressBar updateProgress;
     @FXML
     private Label updateLabel;
     @FXML
@@ -25,13 +29,13 @@ public class WindowController implements Initializable {
     @FXML
     private TableView<Player> playerTable;
     @FXML
-    private ChoiceBox<String> dropDownPrice;
-    @FXML
-    private ChoiceBox<String> dropDownClub;
+    private ChoiceBox<String> dropDownClub, dropDownPosition, dropDownPrice ;
     @FXML
     private TableColumn<Player, String> nameColumn;
     @FXML
     private TableColumn<Player, String> clubColumn;
+    @FXML
+    private TableColumn<Player, String> positionColumn;
     @FXML
     private TableColumn<Player, Float> costColumn;
     @FXML
@@ -47,24 +51,31 @@ public class WindowController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        players =  DataBase.selectData();
         updateDate();
         initTable();
         intitDropDownPrice();
         intitDropDownClub();
+        intitDropDownPosition();
 
     }
 
     private void updateDate(){
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         Date date = new Date(TimeUnit.SECONDS.toMillis(dataBase.selectTime()));
         String text = updateLabel.getText();
         updateLabel.setText(text.split(":")[0] + ": " + sdf.format(date) );
     }
 
     public void updateData(){
-            for(Player p : DataReader.Read())
-                dataBase.insertData(p);
-            updateDate();
+
+        UpdateTask task = new UpdateTask(this, updateProgress);
+        updateProgress.setVisible(true);
+        updateProgress.progressProperty().bind(task.progressProperty());
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+        updateDate();
     }
 
     private ObservableList<Player> getPlayers(){
@@ -86,10 +97,12 @@ public class WindowController implements Initializable {
         totalPointsColumn.setCellValueFactory(new PropertyValueFactory<>("total_points"));
         ictIndexColumn.setCellValueFactory(new PropertyValueFactory<>("ict_index"));
         selectedByColumn.setCellValueFactory(new PropertyValueFactory<>("selected_by_percent"));
+        positionColumn.setCellValueFactory(new PropertyValueFactory<>("element_type"));
         playerTable.setItems(getPlayers());
     }
 
-    private void updateTable(ArrayList<Player> subList){
+    public void updateTable(ArrayList<Player> subList){
+
         playerTable.setItems(getPlayers(subList));
     }
 
@@ -104,6 +117,14 @@ public class WindowController implements Initializable {
                 onDropDownPrice(dropDownPrice.getItems().get(newVal.intValue())));
 
     }
+    private void intitDropDownPosition(){
+        dropDownPosition.getItems().addAll("ALL", "GKP" , "DEF", "MID", "FWD" );
+        dropDownPosition.setValue("ALL");
+
+        dropDownPosition.getSelectionModel().selectedIndexProperty().addListener( (v, oldVal ,newVal)->
+                onDropDownPosition(dropDownPosition.getItems().get(newVal.intValue())));
+
+    }
 
     private void intitDropDownClub(){
         dropDownClub.getItems().addAll("ALL","ARS", "BOU", "BHA", "BUR", "CHE", "CRY",
@@ -111,37 +132,44 @@ public class WindowController implements Initializable {
                 "WAT", "WBA", "WHU");
         dropDownClub.setValue("ALL");
 
-        dropDownClub.getSelectionModel().selectedIndexProperty().addListener( (v, oldVal ,newVal)->{
-            String value = dropDownClub.getItems().get(newVal.intValue());
-            if(value.equals("ALL")){
-                updateTable(this.players);
-            }else {
-                ArrayList<Player> players = new ArrayList<>();
-                for (Player p : this.players) {
-                    if (p.getTeam().equals(value))
-                        players.add(p);
-                }
-                updateTable(players);
-            }
-                });
+        dropDownClub.getSelectionModel().selectedIndexProperty().addListener( (v, oldVal ,newVal)->
+                onDropDownClub(dropDownClub.getItems().get(newVal.intValue())) );
 
     }
 
     private void onDropDownPrice(String value){
         if(value.equals("Unlimited"))
-            updateTable(players);
+            updateTable(createSubList(14f, dropDownClub.getValue(), dropDownPosition.getValue()));
         else
-            updateTable(createSubList(Float.parseFloat(value)));
-
-
+            updateTable(createSubList(Float.parseFloat(value),dropDownClub.getValue(), dropDownPosition.getValue() ));
+    }
+    private void onDropDownPosition(String value){
+        float priceVal;
+        if(dropDownPrice.getValue().equals("Unlimited"))
+            priceVal = 14f;
+        else
+            priceVal =Float.parseFloat(dropDownPrice.getValue());
+        updateTable(createSubList(priceVal, dropDownClub.getValue(), value));
+    }
+    private void onDropDownClub(String value){
+        float priceVal;
+        if(dropDownPrice.getValue().equals("Unlimited"))
+            priceVal = 14f;
+        else
+            priceVal =Float.parseFloat(dropDownPrice.getValue());
+        updateTable(createSubList(priceVal, value, dropDownPosition.getValue() ));
     }
 
 
-    private ArrayList<Player> createSubList(float value){
+    private ArrayList<Player> createSubList(float priceVal, String clubVal, String positionVal){// Problems with this
         ArrayList<Player> players = new ArrayList<>();
         for(Player p : this.players){
-            if(p.getNow_cost() <= value)
+            if(p.getNow_cost() <= priceVal &&
+                    (p.getTeam().equals(clubVal) || p.getTeam().equals("ALL")) &&
+                    (p.getElement_type().equals(positionVal)|| p.getElement_type().equals("ALL"))
+                    ) {
                 players.add(p);
+            }
         }
         return players;
     }

@@ -8,11 +8,12 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.GridPane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="527.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.Rolfrider.WindowController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.Rolfrider.GUI.WindowController">
    <center>
       <TableView fx:id="playerTable" BorderPane.alignment="CENTER">
         <columns>
           <TableColumn fx:id="nameColumn" prefWidth="75.0" text="Name" />
+            <TableColumn fx:id="positionColumn" prefWidth="75.0" text="Position" />
           <TableColumn fx:id="clubColumn" minWidth="20.0" prefWidth="75.0" text="Club" />
             <TableColumn fx:id="formColumn" prefWidth="75.0" text="Form" />
             <TableColumn fx:id="costColumn" prefWidth="75.0" text="Cost" />
@@ -29,9 +30,14 @@
       </TableView>
    </center>
    <bottom>
-      <HBox BorderPane.alignment="CENTER">
+      <HBox fx:id="updateLayout" BorderPane.alignment="CENTER">
          <children>
-            <Region prefHeight="29.0" prefWidth="300.0" HBox.hgrow="ALWAYS" />
+            <Region prefHeight="29.0" prefWidth="280.0" HBox.hgrow="ALWAYS" />
+            <ProgressBar fx:id="updateProgress" prefHeight="18.0" prefWidth="75.0" progress="0.0" visible="false">
+               <HBox.margin>
+                  <Insets bottom="4.0" left="4.0" right="4.0" top="6.0" />
+               </HBox.margin>
+            </ProgressBar>
             <Button fx:id="updateB" mnemonicParsing="false" onAction="#updateData" text="Update">
                <padding>
                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
@@ -78,6 +84,16 @@
                </HBox.margin>
             </Label>
             <ChoiceBox fx:id="dropDownPrice" prefHeight="25.0" prefWidth="89.0">
+               <HBox.margin>
+                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+               </HBox.margin>
+            </ChoiceBox>
+            <Label layoutX="269.0" layoutY="18.0" text="Position : ">
+               <HBox.margin>
+                  <Insets bottom="4.0" left="4.0" right="4.0" top="8.0" />
+               </HBox.margin>
+            </Label>
+            <ChoiceBox fx:id="dropDownPosition" layoutX="344.0" layoutY="14.0" prefHeight="25.0" prefWidth="113.0">
                <HBox.margin>
                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                </HBox.margin>

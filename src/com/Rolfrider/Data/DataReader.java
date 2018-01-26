@@ -1,4 +1,4 @@
-package com.Rolfrider;
+package com.Rolfrider.Data;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 
 public class DataReader {
-    static ArrayList<Player> Read(){
+    public static ArrayList<Player> Read(){
         ArrayList<Player> players = null;
         try {
             URL url = new URL("https://fantasy.premierleague.com/drf/elements/");

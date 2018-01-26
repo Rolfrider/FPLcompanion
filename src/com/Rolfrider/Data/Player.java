@@ -1,4 +1,4 @@
-package com.Rolfrider;
+package com.Rolfrider.Data;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -110,61 +110,53 @@ public class Player {
         return fieldsNames;
     }
 
-    public float getNow_cost() {
-        return (float)now_cost/10;
+    public String getElement_type() {
+        String position = "";
+        switch (element_type){
+            case 1:
+                position = "GKP";
+                break;
+            case 2:
+                position = "DEF";
+                break;
+            case 3:
+                position = "MID";
+                break;
+            case 4:
+                position = "FWD";
+                break;
+        }
+        return position;
     }
 
-    public void setNow_cost(int now_cost) {
-        this.now_cost = now_cost;
+    public float getNow_cost() {
+        return (float)now_cost/10;
     }
 
     public int getTotal_points() {
         return total_points;
     }
 
-    public void setTotal_points(int total_points) {
-        this.total_points = total_points;
-    }
-
     public String getTeam() {
         return teamMap(team);
-    }
-
-    public void setTeam(int team) {
-        this.team = team;
     }
 
     public String getWeb_name(){
         return web_name;
     }
 
-    public void setWeb_name(String web_name) {
-        this.web_name = web_name;
-    }
-
     public Float getSelected_by_percent() {
         return Float.parseFloat(selected_by_percent);
-    }
-
-    public void setSelected_by_percent(String selected_by_percent) {
-        this.selected_by_percent = selected_by_percent;
     }
 
     public Float getForm() {
         return Float.parseFloat(form);
     }
 
-    public void setForm(String form) {
-        this.form = form;
-    }
-
     public Float getIct_index() {
         return Float.parseFloat(ict_index);
     }
 
-    public void setIct_index(String ict_index) {
-        this.ict_index = ict_index;
-    }
 
     public ArrayList<String> getStringFieldsNames(){
         ArrayList<String> fieldsNames = new ArrayList<>();

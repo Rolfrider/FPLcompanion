@@ -1,25 +1,26 @@
-package com.Rolfrider;
+package com.Rolfrider.Data;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class DataBase {
-    final String PATH = "jdbc:sqlite:sql_liteDB/";
-    final String  DBname = "PlayersData.db";
+    final static String PATH = "jdbc:sqlite:sql_liteDB/";
+    final static String  DBname = "PlayersData.db";
 
 
-    DataBase(){
+    public DataBase(){
         createTable();
         createTimeTable();
-        if(needUpdate()){
-            for(Player p : DataReader.Read())
-                insertData(p);
+        if(needUpdate()) {
+            for (Player p : DataReader.Read())
+                updateData(p);
         }
+        insertTime();
 
     }
 
-    private Connection connectToDatabase(){
+    private static Connection connectToDatabase(){
         String url = PATH + DBname;
         Connection conn = null;
         try{
@@ -40,14 +41,8 @@ public class DataBase {
 
                  sData = player.getStringData();
                  int i = 1;
-                 for (String s : sData){
-                     if(s == null){
-                         pstmt.setString(i,"unknown");
-                     }else
-                        pstmt.setString(i,s);
-                     i++;
-                 }
-                 intData = player.getIntData();
+            i = insertStringData(sData, pstmt, i);
+            intData = player.getIntData();
                  for (Integer num : intData){
                      pstmt.setInt(i,num);
                      i++;
@@ -57,18 +52,68 @@ public class DataBase {
         }catch (SQLException e){
             System.out.println(e.getMessage());
         }
-        insertOrUpdate();
+        insertOrUpdateTime();
     }
 
-    public ArrayList<Player> selectData(){// Returns all players
+    public static void updateData(Player player){
+        ArrayList<String> sData = player.getStringData();
+        ArrayList<Integer> intData = player.getIntData();
+        int id = player.getId();
+
+
+        try (Connection conn = connectToDatabase()){
+            PreparedStatement pstmt;
+            if(selectData(id, "=", "id").isEmpty()){
+                pstmt = conn.prepareStatement(sqlInsert);
+                int i = 1;
+                i = insertStringData(sData, pstmt, i);
+                for (Integer num : intData){
+                    pstmt.setInt(i,num);
+                    i++;
+                }
+
+            }else {
+
+                pstmt = conn.prepareStatement(sqlUpdate);
+                intData.remove(0); // removes a id value because we don't update it
+                int i = 1;
+                i = insertStringData(sData, pstmt, i);
+                for (Integer num : intData){
+                    pstmt.setInt(i,num);
+                    i++;
+                }
+                pstmt.setInt(i,id);
+            }
+
+
+            pstmt.executeUpdate();
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+    private static int insertStringData(ArrayList<String> sData, PreparedStatement pstmt, int i) throws SQLException {
+        for (String s : sData){
+            if(s == null){
+                pstmt.setString(i,"unknown");
+            }else
+                pstmt.setString(i,s);
+            i++;
+        }
+        return i;
+    }
+
+
+    public static ArrayList<Player> selectData(){// Returns all players
         ArrayList<Player> players = new ArrayList<>();
         Player player = new Player();
         ArrayList<String> intNames = player.getIntFieldsNames(),
                 stringNames = player.getStringFieldsNames();
-        try (Connection con = this.connectToDatabase();
+        try (Connection con = connectToDatabase();
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(sqlSelect)){
-            parseToplayer(players, player, intNames, stringNames, rs);
+            parseToPlayer(players, player, intNames, stringNames, rs);
 
         }catch (SQLException e){
             System.out.println(e.getMessage());
@@ -77,7 +122,8 @@ public class DataBase {
         return players;
     }
 
-    public ArrayList<Player> selectData(int value, String operator, String field){
+    public static ArrayList<Player> selectData(int value, String operator, String field){
+
 
         String sqlSelect = "SELECT * FROM " + DBname.substring(0, DBname.length()-3) +
                 " WHERE " + field + " " + operator + " ?";
@@ -86,19 +132,20 @@ public class DataBase {
         ArrayList<String> intNames = player.getIntFieldsNames(),
                 stringNames = player.getStringFieldsNames();
 
-        try (Connection con = this.connectToDatabase();
+        try (Connection con = connectToDatabase();
              PreparedStatement pstmt  = con.prepareStatement(sqlSelect)){
             pstmt.setInt(1,value);
             ResultSet rs = pstmt.executeQuery();
-            parseToplayer(players, player, intNames, stringNames, rs);
+            parseToPlayer(players, player, intNames, stringNames, rs);
         }catch (SQLException e){
             System.out.println(e.getMessage());
             System.out.println("Returned null value");
         }
+
         return players;
     }
 
-    public ArrayList<Player> selectData(String value, String operator, String field){
+    public static ArrayList<Player> selectData(String value, String operator, String field){
         String sqlSelect = "SELECT * FROM " + DBname.substring(0, DBname.length()-3) +
                 " WHERE " + field + " " + operator + " ?";
         ArrayList<Player> players = new ArrayList<>();
@@ -106,11 +153,11 @@ public class DataBase {
         ArrayList<String> intNames = player.getIntFieldsNames(),
                 stringNames = player.getStringFieldsNames();
 
-        try (Connection con = this.connectToDatabase();
+        try (Connection con = connectToDatabase();
              PreparedStatement pstmt  = con.prepareStatement(sqlSelect)){
             pstmt.setString(1,value);
             ResultSet rs = pstmt.executeQuery();
-            parseToplayer(players, player, intNames, stringNames, rs);
+            parseToPlayer(players, player, intNames, stringNames, rs);
         }catch (SQLException e){
             System.out.println(e.getMessage());
             System.out.println("Returned null value");
@@ -118,7 +165,7 @@ public class DataBase {
         return players;
     }
 
-    private void parseToplayer(ArrayList<Player> players, Player player, ArrayList<String> intNames,
+    private static void parseToPlayer(ArrayList<Player> players, Player player, ArrayList<String> intNames,
                                ArrayList<String> stringNames, ResultSet rs) throws SQLException {
         while (rs.next()){
             for(String i : intNames)
@@ -136,6 +183,7 @@ public class DataBase {
         try(Connection con = this.connectToDatabase();
             Statement stmt = con.createStatement()){
                 stmt.execute(sql);
+
         }catch (SQLException e){
             System.out.println(e.getMessage());
         }
@@ -158,7 +206,7 @@ public class DataBase {
         return time;
     }
 
-    private void insertOrUpdate(){
+    private void insertOrUpdateTime(){
         int time = selectTime();
         if(time == 0){
             insertTime();
@@ -183,10 +231,10 @@ public class DataBase {
         }
     }
 
-    private void updateTime(){
+    public static void updateTime(){
         String sql = "UPDATE dateTime " +
                 "SET d = strftime('%s', 'now')";
-        try (Connection conn = this.connectToDatabase();
+        try (Connection conn = connectToDatabase();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -210,10 +258,10 @@ public class DataBase {
 
     }
 
-    private String sqlSelect = "SELECT * " +
+    private static String sqlSelect = "SELECT * " +
             "FROM " + DBname.substring(0, DBname.length()-3) ;
 
-    private String sqlInsert = "INSERT OR REPLACE INTO " + DBname.substring(0, DBname.length()-3) +
+    private static String sqlInsert = "INSERT OR REPLACE INTO " + DBname.substring(0, DBname.length()-3) +
             "(web_name,status,first_name,second_name,news," +
             "news_added,value_form,value_seson,selected_by_percent," +
             "form,points_per_game,ep_this,ep_next,influence,creativity," +
@@ -229,6 +277,20 @@ public class DataBase {
             " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?" +
             ",?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?" +
             ",?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
+    private static String sqlUpdate = "UPDATE PlayersData " +
+            "SET web_name  = ?,status  = ?,first_name  = ?,second_name  = ?,news  = ?," +
+            "news_added  = ?,value_form  = ?,value_seson  = ?,selected_by_percent  = ?," +
+            "form  = ?,points_per_game  = ?,ep_this  = ?,ep_next  = ?,influence  = ?,creativity  = ?," +
+            "threat  = ?,ict_index  = ?," +
+            "team_code  = ?,code  = ?,squad_number  = ?,now_cost  = ?,chance_of_playing_this_round  = ?," +
+            "chance_of_playing_next_round  = ?,cost_change_start  = ?,cost_change_event  = ?," +
+            "cost_change_start_fall  = ?,cost_change_event_fall  = ?,dreamteam_count  = ?," +
+            "transfers_out  = ?,transfers_in  = ?,transfers_out_event  = ?,transfers_in_event  = ?," +
+            "loans_in  = ?,loans_out  = ?,loaned_in  = ?,loaned_out  = ?,total_points  = ?,event_points  = ?,minutes  = ?," +
+            "goals_scored  = ?,assists  = ?,clean_sheets  = ?,goals_conceded  = ?,own_goals  = ?,penalties_saved  = ?," +
+            "penalties_missed  = ?,yellow_cards  = ?,red_cards  = ?,saves  = ?,bonus  = ?,bps  = ?,ea_index  = ?,element_type  = ?," +
+            "team  = ?" + " WHERE id = ?";
 
     private String sqlTable = "CREATE TABLE IF NOT EXISTS " + DBname.substring(0, DBname.length()-3) + "(\n"
             + "	id integer PRIMARY KEY AUTOINCREMENT,\n"
