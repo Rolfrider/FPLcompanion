@@ -20,6 +20,8 @@
             <TableColumn fx:id="totalPointsColumn" prefWidth="75.0" text="Total points" />
             <TableColumn fx:id="ictIndexColumn" prefWidth="75.0" text="ICT index" />
             <TableColumn fx:id="selectedByColumn" prefWidth="75.0" text="Selected by" />
+            <TableColumn fx:id="pointsPerGameColumn" prefWidth="75.0" text="Points per game" />
+            <TableColumn fx:id="newsColumn" prefWidth="75.0" text="news" />
         </columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

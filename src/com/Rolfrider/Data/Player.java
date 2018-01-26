@@ -129,6 +129,14 @@ public class Player {
         return position;
     }
 
+    public String getNews() {
+        return news;
+    }
+
+    public float getPoints_per_game() {
+        return Float.parseFloat(points_per_game);
+    }
+
     public float getNow_cost() {
         return (float)now_cost/10;
     }

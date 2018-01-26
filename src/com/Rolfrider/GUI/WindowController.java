@@ -35,6 +35,10 @@ public class WindowController implements Initializable {
     @FXML
     private TableColumn<Player, String> clubColumn;
     @FXML
+    private TableColumn<Player, String> newsColumn;
+    @FXML
+    private TableColumn<Player, Float> pointsPerGameColumn;
+    @FXML
     private TableColumn<Player, String> positionColumn;
     @FXML
     private TableColumn<Player, Float> costColumn;
@@ -98,6 +102,8 @@ public class WindowController implements Initializable {
         ictIndexColumn.setCellValueFactory(new PropertyValueFactory<>("ict_index"));
         selectedByColumn.setCellValueFactory(new PropertyValueFactory<>("selected_by_percent"));
         positionColumn.setCellValueFactory(new PropertyValueFactory<>("element_type"));
+        pointsPerGameColumn.setCellValueFactory(new PropertyValueFactory<>("points_per_game"));
+        newsColumn.setCellValueFactory(new PropertyValueFactory<>("news"));
         playerTable.setItems(getPlayers());
     }
 
