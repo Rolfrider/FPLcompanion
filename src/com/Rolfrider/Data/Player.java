@@ -7,6 +7,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/*
+To do:
+change names to camelCase.
+ */
+
+
 public class Player {
     private int     id,
             team_code,

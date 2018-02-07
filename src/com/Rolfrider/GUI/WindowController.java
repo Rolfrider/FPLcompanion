@@ -6,11 +6,18 @@ import com.Rolfrider.Data.UpdateTask;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 
 
+import javafx.event.ActionEvent;
+import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -62,6 +69,15 @@ public class WindowController implements Initializable {
         intitDropDownClub();
         intitDropDownPosition();
 
+    }
+
+    public void showDetailedWindow(ActionEvent event) throws IOException{
+        Parent detailedWindowParent = FXMLLoader.load(getClass().getResource("detailedWindow.fxml"));
+        Scene detailedWindowScene = new Scene(detailedWindowParent);
+
+        Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();
+        window.setScene(detailedWindowScene);
+        window.show();
     }
 
     private void updateDate(){
