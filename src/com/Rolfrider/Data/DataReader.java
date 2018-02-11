@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 
 public class DataReader {
-    public static ArrayList<Player> Read(){
+    public static ArrayList<Player> ReadPlayers(){
         ArrayList<Player> players = null;
         try {
             URL url = new URL("https://fantasy.premierleague.com/drf/elements/");
@@ -27,5 +27,21 @@ public class DataReader {
 
 
         return players;
+    }
+
+    public static PlayerDetails ReadPlayersDetails(String id){
+        PlayerDetails player = new PlayerDetails();
+        try {
+            URL url = new URL("https://fantasy.premierleague.com/drf/element-summary/" + id);
+            InputStreamReader reader = new InputStreamReader(url.openStream());
+            player = new Gson().fromJson(reader, PlayerDetails.class);
+        }
+        catch (IOException e){
+            System.out.println("Cant download the data");
+            System.out.println("Returned a null list");
+        }
+
+
+        return player;
     }
 }

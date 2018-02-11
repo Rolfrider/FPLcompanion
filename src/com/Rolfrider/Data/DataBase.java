@@ -13,7 +13,7 @@ public class DataBase {
         createTable();
         createTimeTable();
         if(needUpdate()) {
-            for (Player p : DataReader.Read())
+            for (Player p : DataReader.ReadPlayers())
                 updateData(p);
         }
         insertTime();

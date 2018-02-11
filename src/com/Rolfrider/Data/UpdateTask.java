@@ -17,7 +17,7 @@ public class UpdateTask extends Task<Void>{
     }
     @Override
     protected Void call() throws Exception {
-        ArrayList<Player> players = DataReader.Read();
+        ArrayList<Player> players = DataReader.ReadPlayers();
         for(Player p : players){
           DataBase.updateData(p);
            updateProgress(p.getId(), players.size());
