@@ -9,6 +9,8 @@ import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.ArrayList;
 
+// url for photos https://platform-static-files.s3.amazonaws.com/premierleague/photos/players/110x140/p111457.png
+
 
 public class DataReader {
     public static ArrayList<Player> ReadPlayers(){

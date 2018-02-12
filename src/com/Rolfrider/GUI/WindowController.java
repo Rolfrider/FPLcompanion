@@ -3,8 +3,10 @@ package com.Rolfrider.GUI;
 import com.Rolfrider.Data.DataBase;
 import com.Rolfrider.Data.Player;
 import com.Rolfrider.Data.UpdateTask;
+import com.sun.javafx.scene.control.skin.TableColumnHeader;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -13,10 +15,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
 
-import javafx.event.ActionEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -25,12 +27,14 @@ import java.util.concurrent.TimeUnit;
 
 public class WindowController implements Initializable {
 
-    private DataBase dataBase = new DataBase();
+    private DataBase dataBase ;
+
     private ArrayList<Player> players ;
+
     @FXML
     private ProgressBar updateProgress;
     @FXML
-    private Label updateLabel;
+    private  Label updateLabel;
     @FXML
     private TextField nameText;
     @FXML
@@ -61,7 +65,7 @@ public class WindowController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        dataBase = new DataBase( updateLabel, this);
         players =  DataBase.selectData();
         updateDate();
         initTable();
@@ -71,7 +75,7 @@ public class WindowController implements Initializable {
 
     }
 
-    public void showDetailedWindow(ActionEvent event) throws IOException{
+    public void showDetailedWindow(Event event) throws IOException{
         Parent detailedWindowParent = FXMLLoader.load(getClass().getResource("detailedWindow.fxml"));
         Scene detailedWindowScene = new Scene(detailedWindowParent);
 
@@ -80,20 +84,19 @@ public class WindowController implements Initializable {
         window.show();
     }
 
-    private void updateDate(){
+    public void updateDate(){
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        Date date = new Date(TimeUnit.SECONDS.toMillis(dataBase.selectTime()));
+        Date date = new Date(TimeUnit.SECONDS.toMillis(DataBase.selectTime()));
         String text = updateLabel.getText();
         updateLabel.setText(text.split(":")[0] + ": " + sdf.format(date) );
     }
 
     public void updateData(){
 
-        UpdateTask task = new UpdateTask(this, updateProgress);
+        UpdateTask task = new UpdateTask( updateProgress, updateLabel, this);
         updateProgress.setVisible(true);
         updateProgress.progressProperty().bind(task.progressProperty());
         Thread thread = new Thread(task);
-        thread.setDaemon(true);
         thread.start();
         updateDate();
     }
@@ -121,6 +124,46 @@ public class WindowController implements Initializable {
         pointsPerGameColumn.setCellValueFactory(new PropertyValueFactory<>("points_per_game"));
         newsColumn.setCellValueFactory(new PropertyValueFactory<>("news"));
         playerTable.setItems(getPlayers());
+
+        Label tsbLabel = new Label("TSB");
+        tsbLabel.setTooltip(new Tooltip("Team selected by %"));
+        selectedByColumn.setGraphic(tsbLabel);
+
+        Label ictLabel = new Label("ICT");
+        ictLabel.setTooltip(new Tooltip("Combination of influence, creativity and threat of a player"));
+        ictIndexColumn.setGraphic(ictLabel);
+
+        Label ppgLabel = new Label("PPG");
+        ppgLabel.setTooltip(new Tooltip("Points per game"));
+        pointsPerGameColumn.setGraphic(ppgLabel);
+
+        playerTable.setTooltip(new Tooltip("Double click or press Enter to see details"));
+
+        playerTable.setOnMouseClicked(event -> {
+            if(event.getClickCount() >= 2) {
+                try {
+                    showDetailedWindow(event);
+                }catch (IOException err){
+                    System.out.println(err.getMessage());
+                }
+            }
+        });
+
+        playerTable.setOnKeyPressed(event -> {
+            if(event.getCode().equals(KeyCode.ENTER)){
+                try {
+                    showDetailedWindow(event);
+                }catch (IOException err){
+                    System.out.println(err.getMessage());
+                }
+            }
+        });
+    }
+
+    private void addTooltip(){
+        TableColumnHeader header = (TableColumnHeader) playerTable.lookup("#" + selectedByColumn.getId());
+        Label label = (Label) header.lookup(".label");
+        label.setTooltip(new Tooltip("Team selected by %"));
     }
 
     public void updateTable(ArrayList<Player> subList){

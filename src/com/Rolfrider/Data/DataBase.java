@@ -1,22 +1,29 @@
 package com.Rolfrider.Data;
 
+import com.Rolfrider.GUI.WindowController;
+import javafx.scene.control.Label;
+
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
+
+
 
 public class DataBase {
     final static String PATH = "jdbc:sqlite:sql_liteDB/";
     final static String  DBname = "PlayersData.db";
 
 
-    public DataBase(){
+    public DataBase(Label label, WindowController con){
         createTable();
         createTimeTable();
         if(needUpdate()) {
-            for (Player p : DataReader.ReadPlayers())
-                updateData(p);
+            UpdateTask task = new UpdateTask(null, label, con);
+            Thread thread = new Thread(task);
+            thread.start();
         }
-        insertTime();
+
 
     }
 
@@ -36,7 +43,7 @@ public class DataBase {
     public void insertData(Player player){
         ArrayList<String> sData;
         ArrayList<Integer> intData;
-        try (Connection con = this.connectToDatabase();
+        try (Connection con = connectToDatabase();
         PreparedStatement pstmt = con.prepareStatement(sqlInsert)){
 
                  sData = player.getStringData();
@@ -52,7 +59,6 @@ public class DataBase {
         }catch (SQLException e){
             System.out.println(e.getMessage());
         }
-        insertOrUpdateTime();
     }
 
     public static void updateData(Player player){
@@ -180,7 +186,7 @@ public class DataBase {
     private void createTimeTable(){
         String sql = "CREATE TABLE " +
                 "  IF NOT EXISTS dateTime (d int)";
-        try(Connection con = this.connectToDatabase();
+        try(Connection con = connectToDatabase();
             Statement stmt = con.createStatement()){
                 stmt.execute(sql);
 
@@ -189,11 +195,11 @@ public class DataBase {
         }
     }
 
-    public int selectTime(){
+    public static int selectTime(){
         String sql = "SELECT d " +
                 "FROM dateTime";
         int time = 0;
-        try (Connection con = this.connectToDatabase();
+        try (Connection con = connectToDatabase();
              PreparedStatement pstmt  = con.prepareStatement(sql)){
             ResultSet rs = pstmt.executeQuery();
             if(rs.next()){
@@ -206,7 +212,7 @@ public class DataBase {
         return time;
     }
 
-    private void insertOrUpdateTime(){
+    public static void insertOrUpdateTime(){
         int time = selectTime();
         if(time == 0){
             insertTime();
@@ -220,10 +226,10 @@ public class DataBase {
     }
 
 
-    private void insertTime(){
+    private static void insertTime(){
         String sql = "INSERT INTO dateTime (d)" +
                 "VALUES (strftime('%s', 'now'))";
-        try (Connection conn = this.connectToDatabase();
+        try (Connection conn = connectToDatabase();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.executeUpdate();
         } catch (SQLException e) {

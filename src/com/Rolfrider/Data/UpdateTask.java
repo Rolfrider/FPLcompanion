@@ -2,28 +2,43 @@ package com.Rolfrider.Data;
 
 import com.Rolfrider.GUI.WindowController;
 import javafx.concurrent.Task;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 
 import java.util.ArrayList;
 
 public class UpdateTask extends Task<Void>{
 
-    WindowController controller;
-    ProgressBar progressBar;
 
-    public UpdateTask(WindowController con, ProgressBar pb){
-        this.controller = con;
+    ProgressBar progressBar;
+    Label label;
+    WindowController con;
+
+    public UpdateTask(ProgressBar pb, Label label, WindowController con){
         this.progressBar = pb;
+        this.label = label;
+        this.con = con;
+
     }
+
+
     @Override
     protected Void call() throws Exception {
         ArrayList<Player> players = DataReader.ReadPlayers();
-        for(Player p : players){
-          DataBase.updateData(p);
-           updateProgress(p.getId(), players.size());
+        if(progressBar != null){
+            for(Player p : players){
+              DataBase.updateData(p);
+               updateProgress(p.getId(), players.size());
+            }
+
+            progressBar.setVisible(false);
+        } else {
+            for(Player p : players){
+                DataBase.updateData(p);
+            }
         }
-        DataBase.updateTime();
-        progressBar.setVisible(false);
+        DataBase.insertOrUpdateTime();
+        con.updateDate();
         return null;
     }
 
