@@ -12,7 +12,7 @@
    <center>
       <TableView fx:id="playerTable" BorderPane.alignment="CENTER">
         <columns>
-          <TableColumn fx:id="nameColumn" maxWidth="100.0" minWidth="65.0" prefWidth="-1.0" text="Name" />
+          <TableColumn fx:id="nameColumn" maxWidth="120.0" minWidth="65.0" prefWidth="-1.0" text="Name" />
             <TableColumn fx:id="positionColumn" maxWidth="50.0" minWidth="35.0" prefWidth="-1.0" text="Pos" />
           <TableColumn fx:id="clubColumn" maxWidth="60.0" minWidth="40.0" prefWidth="-1.0" text="Club" />
             <TableColumn fx:id="formColumn" maxWidth="60.0" minWidth="40.0" prefWidth="-1.0" text="Form" />

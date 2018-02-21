@@ -1,9 +1,13 @@
 package com.Rolfrider.GUI;
 
+
+//Change the background loading
+
 import com.Rolfrider.Data.DataBase;
 import com.Rolfrider.Data.Player;
 import com.Rolfrider.Data.UpdateTask;
 import com.sun.javafx.scene.control.skin.TableColumnHeader;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -62,13 +66,19 @@ public class WindowController implements Initializable {
     @FXML
     private TableColumn<Player, Float> selectedByColumn;
 
+    public TableView<Player> getPlayerTable() {
+        return playerTable;
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        dataBase = new DataBase( updateLabel, this);
-        players =  DataBase.selectData();
-        updateDate();
-        initTable();
+        Platform.runLater(()->{
+            dataBase = new DataBase( updateLabel, this);
+            players =  DataBase.selectData();
+            updateDate();
+            initTable();
+        });
+
         intitDropDownPrice();
         intitDropDownClub();
         intitDropDownPosition();
@@ -76,8 +86,13 @@ public class WindowController implements Initializable {
     }
 
     public void showDetailedWindow(Event event) throws IOException{
-        Parent detailedWindowParent = FXMLLoader.load(getClass().getResource("detailedWindow.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("detailedWindow.fxml"));
+
+        Parent detailedWindowParent = loader.load();
         Scene detailedWindowScene = new Scene(detailedWindowParent);
+
+        DetailedWindowController controller = loader.getController();
+        controller.initData(playerTable.getSelectionModel().getSelectedItem());
 
         Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();
         window.setScene(detailedWindowScene);
@@ -106,7 +121,10 @@ public class WindowController implements Initializable {
         players.addAll(this.players);
         return players;
     }
-    private ObservableList<Player> getPlayers(ArrayList<Player> players){
+
+
+
+    public ObservableList<Player> getPlayers(ArrayList<Player> players){
         ObservableList<Player> observableList = FXCollections.observableArrayList();
         observableList.addAll(players);
         return observableList;
@@ -123,6 +141,7 @@ public class WindowController implements Initializable {
         positionColumn.setCellValueFactory(new PropertyValueFactory<>("element_type"));
         pointsPerGameColumn.setCellValueFactory(new PropertyValueFactory<>("points_per_game"));
         newsColumn.setCellValueFactory(new PropertyValueFactory<>("news"));
+
         playerTable.setItems(getPlayers());
 
         Label tsbLabel = new Label("TSB");

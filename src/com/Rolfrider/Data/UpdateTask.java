@@ -39,6 +39,7 @@ public class UpdateTask extends Task<Void>{
         }
         DataBase.insertOrUpdateTime();
         con.updateDate();
+        con.getPlayerTable().setItems(con.getPlayers(DataBase.selectData()));
         return null;
     }
 

@@ -2,6 +2,7 @@ package com.Rolfrider.Data;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import javafx.scene.image.Image;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,7 +10,10 @@ import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.ArrayList;
 
-// url for photos https://platform-static-files.s3.amazonaws.com/premierleague/photos/players/110x140/p111457.png
+
+// url for players https://fantasy.premierleague.com/drf/elements/
+// url for detailed player info https://fantasy.premierleague.com/drf/element-summary/{player id}
+// url for photos https://platform-static-files.s3.amazonaws.com/premierleague/photos/players/110x140/p{photo id}.png
 
 
 public class DataReader {
@@ -46,4 +50,9 @@ public class DataReader {
 
         return player;
     }
+
+    public static Image getPhoto(String photoId){
+        return new Image("https://platform-static-files.s3.amazonaws.com/premierleague/photos/players/110x140/p" + photoId, true );
+    }
+
 }

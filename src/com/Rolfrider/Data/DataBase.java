@@ -268,7 +268,7 @@ public class DataBase {
             "FROM " + DBname.substring(0, DBname.length()-3) ;
 
     private static String sqlInsert = "INSERT OR REPLACE INTO " + DBname.substring(0, DBname.length()-3) +
-            "(web_name,status,first_name,second_name,news," +
+            "(photo,web_name,status,first_name,second_name,news," +
             "news_added,value_form,value_seson,selected_by_percent," +
             "form,points_per_game,ep_this,ep_next,influence,creativity," +
             "threat,ict_index," +
@@ -280,12 +280,12 @@ public class DataBase {
             "goals_scored,assists,clean_sheets,goals_conceded,own_goals,penalties_saved," +
             "penalties_missed,yellow_cards,red_cards,saves,bonus,bps,ea_index,element_type," +
             "team)" +
-            " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?" +
+            " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?" +
             ",?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?" +
             ",?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
     private static String sqlUpdate = "UPDATE PlayersData " +
-            "SET web_name  = ?,status  = ?,first_name  = ?,second_name  = ?,news  = ?," +
+            "SET photo = ?, web_name  = ?,status  = ?,first_name  = ?,second_name  = ?,news  = ?," +
             "news_added  = ?,value_form  = ?,value_seson  = ?,selected_by_percent  = ?," +
             "form  = ?,points_per_game  = ?,ep_this  = ?,ep_next  = ?,influence  = ?,creativity  = ?," +
             "threat  = ?,ict_index  = ?," +
@@ -301,6 +301,7 @@ public class DataBase {
     private String sqlTable = "CREATE TABLE IF NOT EXISTS " + DBname.substring(0, DBname.length()-3) + "(\n"
             + "	id integer PRIMARY KEY AUTOINCREMENT,\n"
 
+            + " photo text NOT NULL, \n"
             + " web_name text NOT NULL, \n "
             + " status text NOT NULL, \n "
             + " first_name text NOT NULL, \n "

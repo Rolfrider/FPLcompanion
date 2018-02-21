@@ -135,6 +135,27 @@ public class Player {
         return position;
     }
 
+
+    public String getFirst_name() {
+        return first_name;
+    }
+
+    public String getSecond_name() {
+        return second_name;
+    }
+
+    public int getGoals_scored() {
+        return goals_scored;
+    }
+
+    public int getAssists() {
+        return assists;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
     public String getNews() {
         return news;
     }
@@ -152,7 +173,7 @@ public class Player {
     }
 
     public String getTeam() {
-        return teamMap(team);
+        return TeamMapper.teamKeyMap(team);
     }
 
     public String getWeb_name(){
@@ -176,7 +197,7 @@ public class Player {
         ArrayList<String> fieldsNames = new ArrayList<>();
         Field[] fields = this.getClass().getDeclaredFields();
         for(Field f : fields){
-            if(f.getType() == String.class && !f.getName().equals("photo")){
+            if(f.getType() == String.class){
                 fieldsNames.add(f.getName());
             }
         }
@@ -203,7 +224,7 @@ public class Player {
         ArrayList<String> sData = new ArrayList<>();
         Field[] fields = this.getClass().getDeclaredFields();
         for(Field f : fields){
-            if(f.getType()==String.class && !f.getName().equals("photo"))
+            if(f.getType()==String.class)
                 try {
                     sData.add((String) f.get(this));
                 }catch (IllegalAccessException e){
@@ -214,72 +235,7 @@ public class Player {
         return sData;
     }
 
-    private String teamMap(int team){
-        String teamName = "";
-        switch (team){
-            case 1:
-                teamName = "ARS";
-                break;
-            case 2:
-                teamName = "BOU";
-                break;
-            case 3:
-                teamName = "BHA";
-                break;
-            case 4:
-                teamName = "BUR";
-                break;
-            case 5:
-                teamName = "CHE";
-                break;
-            case 6:
-                teamName = "CRY";
-                break;
-            case 7:
-                teamName = "EVE";
-                break;
-            case 8:
-                teamName = "HUD";
-                break;
-            case 9:
-                teamName = "LEI";
-                break;
-            case 10:
-                teamName = "LIV";
-                break;
-            case 11:
-                teamName = "MCI";
-                break;
-            case 12:
-                teamName = "MUN";
-                break;
-            case 13:
-                teamName = "NEW";
-                break;
-            case 14:
-                teamName = "SOU";
-                break;
-            case 15:
-                teamName = "STK";
-                break;
-            case 16:
-                teamName = "SWA";
-                break;
-            case 17:
-                teamName = "TOT";
-                break;
-            case 18:
-                teamName = "WAT";
-                break;
-            case 19:
-                teamName = "WBA";
-                break;
-            case 20:
-                teamName = "WHU";
-                break;
-        }
-        return teamName;
-    }
+
 
 
 }
