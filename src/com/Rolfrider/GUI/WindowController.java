@@ -1,7 +1,6 @@
 package com.Rolfrider.GUI;
 
 
-//Change the background loading
 
 import com.Rolfrider.Data.DataBase;
 import com.Rolfrider.Data.Player;
@@ -73,7 +72,7 @@ public class WindowController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Platform.runLater(()->{
-            dataBase = new DataBase( updateLabel, this);
+            dataBase = new DataBase(this);
             players =  DataBase.selectData();
             updateDate();
             initTable();
@@ -105,15 +104,21 @@ public class WindowController implements Initializable {
         String text = updateLabel.getText();
         updateLabel.setText(text.split(":")[0] + ": " + sdf.format(date) );
     }
+    public void updateDate(Date date){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        String text = updateLabel.getText();
+        updateLabel.setText(text.split(":")[0] + ": " + sdf.format(date) );
+    }
 
     public void updateData(){
 
-        UpdateTask task = new UpdateTask( updateProgress, updateLabel, this);
+        UpdateTask task = new UpdateTask( updateProgress, this);
         updateProgress.setVisible(true);
         updateProgress.progressProperty().bind(task.progressProperty());
         Thread thread = new Thread(task);
+        updateLabel.setText("updating");
         thread.start();
-        updateDate();
+
     }
 
     private ObservableList<Player> getPlayers(){
@@ -265,9 +270,14 @@ public class WindowController implements Initializable {
     }
 
     public void nameTyping(){
+        ArrayList<Player> players = new ArrayList<>();
         String text = nameText.getText();
-        updateTable(dataBase.selectData(text + "%", "like", "web_name"));
+        this.players.forEach(player -> {
+            if(player.getWeb_name().toLowerCase().startsWith(text.toLowerCase()))
+                players.add(player);
+        });
         setDropDowns();
+        updateTable(players);
     }
 
 }

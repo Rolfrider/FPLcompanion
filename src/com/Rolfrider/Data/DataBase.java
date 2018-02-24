@@ -15,11 +15,11 @@ public class DataBase {
     final static String  DBname = "PlayersData.db";
 
 
-    public DataBase(Label label, WindowController con){
+    public DataBase(WindowController con){
         createTable();
         createTimeTable();
         if(needUpdate()) {
-            UpdateTask task = new UpdateTask(null, label, con);
+            UpdateTask task = new UpdateTask(null, con);
             Thread thread = new Thread(task);
             thread.start();
         }

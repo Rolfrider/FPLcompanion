@@ -17,10 +17,14 @@ import java.util.ArrayList;
 
 
 public class DataReader {
+    private final static String playersUrl = "https://fantasy.premierleague.com/drf/elements/",
+                        detailsUrl = "https://fantasy.premierleague.com/drf/element-summary/",
+                        photoUrl = "https://platform-static-files.s3.amazonaws.com/premierleague/photos/players/110x140/p";
+
     public static ArrayList<Player> ReadPlayers(){
         ArrayList<Player> players = null;
         try {
-            URL url = new URL("https://fantasy.premierleague.com/drf/elements/");
+            URL url = new URL(playersUrl);
             InputStreamReader reader = new InputStreamReader(url.openStream());
             Type playerListType = new TypeToken<ArrayList<Player>>() {
             }.getType();
@@ -38,7 +42,7 @@ public class DataReader {
     public static PlayerDetails ReadPlayersDetails(String id){
         PlayerDetails player = new PlayerDetails();
         try {
-            URL url = new URL("https://fantasy.premierleague.com/drf/element-summary/" + id);
+            URL url = new URL( detailsUrl + id);
             InputStreamReader reader = new InputStreamReader(url.openStream());
             player = new Gson().fromJson(reader, PlayerDetails.class);
         }
@@ -52,7 +56,7 @@ public class DataReader {
     }
 
     public static Image getPhoto(String photoId){
-        return new Image("https://platform-static-files.s3.amazonaws.com/premierleague/photos/players/110x140/p" + photoId, true );
+        return new Image( photoUrl + photoId, true );
     }
 
 }
